@@ -30,3 +30,7 @@ pip install -r requirements.txt
 - [ ] Model 1
 - [ ] Model 2
 - [ ] Presentation
+
+## we used data from here:
+
+https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset?resource=download
