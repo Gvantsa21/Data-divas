@@ -10,10 +10,6 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# Data files (usually not uploaded)
-data/
-*.csv
-*.xlsx
 
 # OS files
 .DS_Store
