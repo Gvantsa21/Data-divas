@@ -65,7 +65,7 @@ def handle_outliers(df):
     
     print(f"Outliers capped to IQR bounds")
     print(f"Shape after outlier handling: {df_clean.shape}")
-    
+
     return df_clean
 
 
@@ -125,6 +125,17 @@ def create_derived_features(df):
             df_clean['tempo'],
             bins=[0, 100, 140, 300],
             labels=['Slow', 'Medium', 'Fast'],
+            include_lowest=True
+        )
+        
+    if 'acousticness' in df_clean.columns:
+        df_clean['is_acoustic'] = (df_clean['acousticness'] > 0.5).astype(bool)
+    
+    if 'valence' in df_clean.columns:
+        df_clean['valence_category'] = pd.cut(
+            df_clean['valence'],
+            bins=[0, 0.33, 0.67, 1.0],
+            labels=['Sad', 'Neutral', 'Happy'],
             include_lowest=True
         )
 
