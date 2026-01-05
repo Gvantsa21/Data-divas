@@ -1,9 +1,31 @@
+"""
+Clean and preprocess the input DataFrame
+"""
 import pandas as pd
 import numpy as np
 import os
 
 def load_data(path="data/raw/dataset.csv"):
-    """Load the raw dataset and display initial info"""
+    """
+    Loading the raw dataset and displaying infos
+
+    Parameters
+    ----------
+    path : str
+        Path to the raw CSV file
+
+    Returns
+    -------
+    pd.DataFrame
+        Loaded dataset
+        
+    Raises
+    ------
+    FileNotFoundError
+        If the specified file path does not exist
+    """
+    # Implementation here
+
     if not os.path.exists(path):
         raise FileNotFoundError(f"{path} not found.")
     
@@ -15,15 +37,28 @@ def load_data(path="data/raw/dataset.csv"):
     print(f"shape: {df.shape}")
     return df
 
+
 def handle_missing_values(df):
-    """Handle missing values and document decisions"""
+    """
+    Handling missing values 
+    
+    Parameters
+    ----------
+    df : pd.DataFrame
+        raw input data to be processed
+        
+    Returns
+    -------
+    pd.DataFrame
+        df with missing values filled
+    """
     df_clean = df.copy()
 
     if df_clean.isnull().sum().sum() == 0:
         print("No missing values detected")
         return df_clean
-    
-    # filling categorical missing values with 'Unknown'
+
+    # categorical - filling with 'Unknown'
     categorical_cols = df_clean.select_dtypes(include=['object', 'category']).columns
     for col in categorical_cols:
         missing_count = df_clean[col].isnull().sum()
@@ -31,7 +66,7 @@ def handle_missing_values(df):
             print(f"Filling {missing_count} missing values in '{col}' with 'Unknown'")
             df_clean[col] = df_clean[col].fillna('Unknown')
     
-    # Fill numerical missing values with median
+    # numerical - filling with median
     num_cols = df_clean.select_dtypes(include='number').columns
     for col in num_cols:
         missing_count = df_clean[col].isnull().sum()
@@ -43,7 +78,21 @@ def handle_missing_values(df):
     return df_clean
 
 def handle_outliers(df):
-    """Remove outliers per column by capping to bounds"""
+    """
+    removing outliers per column by capping to bounds using IQR method
+    
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataset
+    threshold : float, optional
+        IQR multiplier for outlier bounds (default: 1.5)
+        
+    Returns
+    -------
+    pd.DataFrame
+        Df with outliers capped to IQR bounds
+    """
     df_clean = df.copy()
     
     exclude_cols = ['id', 'popularity', 'duration_ms', 'key', 'mode', 
@@ -70,7 +119,19 @@ def handle_outliers(df):
 
 
 def convert_data_types(df):
-    """Convert columns to appropriate data types"""
+    """
+    Converting columns to appropriate data types
+    
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataset
+        
+    Returns
+    -------
+    pd.DataFrame
+        Dataset with optimized data types
+    """
     df_clean = df.copy()
 
     # Boolean conversion
@@ -91,7 +152,6 @@ def convert_data_types(df):
             df_clean[col] = df_clean[col].astype('float32')        
     
     return df_clean
-
 
 
 def create_derived_features(df):
@@ -142,13 +202,39 @@ def create_derived_features(df):
     return df_clean
 
 def save_clean_data(df, path="data/processed/spotify_cleaned.csv"):
+    """
+    Saving cleaned data
+    
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Cleaned dataset
+    path : str
+        csv file 
+    """
+    
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df.to_csv(path, index=False)
     print(f"Final cleaned data saved to {path}")
 
 def preprocess_pipeline(input_path="data/raw/dataset.csv",
                         output_path="data/processed/spotify_cleaned.csv"):
-   
+    
+    """
+    complete preprocessing pipeline
+    
+    Parameters
+    ----------
+    input_path : str
+        path to raw CSV file
+    output_path : str
+        path to save cleaned CSV file
+        
+    Returns
+    -------
+    pd.DataFrame
+        fully preprocessed and cleaned dataset
+    """
     df = load_data(input_path)
     df = handle_missing_values(df)
     df = handle_outliers(df)
